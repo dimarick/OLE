@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP Version 5                                                        |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 1997-2002 The PHP Group                                |
 // +----------------------------------------------------------------------+
@@ -19,26 +19,11 @@
 //
 // $Id$
 
-
 /**
-* Constants for OLE package
-*/
-define('OLE_PPS_TYPE_ROOT',        5);
-define('OLE_PPS_TYPE_DIR',         1);
-define('OLE_PPS_TYPE_FILE',        2);
-define('OLE_DATA_SIZE_SMALL', 0x1000);
-define('OLE_LONG_INT_SIZE',        4);
-define('OLE_PPS_SIZE',          0x80);
-
-if (!class_exists('PEAR')) {
-    require_once 'PEAR.php';
-}
-
-/**
-* Array for storing OLE instances that are accessed from
-* OLE_ChainedBlockStream::stream_open().
-* @var  array
-*/
+ * Array for storing OLE instances that are accessed from
+ * OLE_ChainedBlockStream::stream_open().
+ * @var  array
+ */
 $GLOBALS['_OLE_INSTANCES'] = array();
 
 /**
@@ -49,50 +34,56 @@ $GLOBALS['_OLE_INSTANCES'] = array();
 * @author   Xavier Noguer <xnoguer@php.net>
 * @author   Christian Schmidt <schmidt@php.net>
 */
-class OLE extends PEAR
+class OLE
 {
+    const OLE_PPS_TYPE_ROOT =         5;
+    const OLE_PPS_TYPE_DIR =          1;
+    const OLE_PPS_TYPE_FILE =         2;
 
+    const OLE_DATA_SIZE_SMALL =  0x1000;
+    const OLE_LONG_INT_SIZE =         4;
+    const OLE_PPS_SIZE =           0x80;
     /**
     * The file handle for reading an OLE container
     * @var resource
     */
-    var $_file_handle;
+    public $_file_handle;
 
     /**
     * Array of PPS's found on the OLE container
     * @var array
     */
-    var $_list;
+    public $_list;
 
     /**
     * Root directory of OLE container
     * @var OLE_PPS_Root
     */
-    var $root;
+    public $root;
 
     /**
     * Big Block Allocation Table
     * @var array  (blockId => nextBlockId)
     */
-    var $bbat;
+    public $bbat;
 
     /**
     * Short Block Allocation Table
     * @var array  (blockId => nextBlockId)
     */
-    var $sbat;
+    public $sbat;
 
     /**
     * Size of big blocks. This is usually 512.
     * @var  int  number of octets per block.
     */
-    var $bigBlockSize;
+    public $bigBlockSize;
 
     /**
     * Size of small blocks. This is usually 64.
     * @var  int  number of octets per block
     */
-    var $smallBlockSize;
+    public $smallBlockSize;
 
     /**
     * Creates a new OLE object
@@ -309,16 +300,16 @@ class OLE extends PEAR
             $name = str_replace("\x00", "", $nameUtf16);
             $type = $this->_readInt1($fh);
             switch ($type) {
-            case OLE_PPS_TYPE_ROOT:
+            case self::OLE_PPS_TYPE_ROOT:
                 require_once 'OLE/PPS/Root.php';
                 $pps = new OLE_PPS_Root(null, null, array());
                 $this->root = $pps;
                 break;
-            case OLE_PPS_TYPE_DIR:
+            case self::OLE_PPS_TYPE_DIR:
                 $pps = new OLE_PPS(null, null, null, null, null,
                                    null, null, null, null, array());
                 break;
-            case OLE_PPS_TYPE_FILE:
+            case self::OLE_PPS_TYPE_FILE:
                 require_once 'OLE/PPS/File.php';
                 $pps = new OLE_PPS_File($name);
                 break;
@@ -350,7 +341,7 @@ class OLE extends PEAR
 
         // Initialize $pps->children on directories
         foreach ($this->_list as $pps) {
-            if ($pps->Type == OLE_PPS_TYPE_DIR || $pps->Type == OLE_PPS_TYPE_ROOT) {
+            if ($pps->Type == self::OLE_PPS_TYPE_DIR || $pps->Type == self::OLE_PPS_TYPE_ROOT) {
                 $nos = array($pps->DirPps);
                 $pps->children = array();
                 while ($nos) {
@@ -398,7 +389,7 @@ class OLE extends PEAR
     function isFile($index)
     {
         if (isset($this->_list[$index])) {
-            return ($this->_list[$index]->Type == OLE_PPS_TYPE_FILE);
+            return ($this->_list[$index]->Type == self::OLE_PPS_TYPE_FILE);
         }
         return false;
     }
@@ -413,7 +404,7 @@ class OLE extends PEAR
     function isRoot($index)
     {
         if (isset($this->_list[$index])) {
-            return ($this->_list[$index]->Type == OLE_PPS_TYPE_ROOT);
+            return ($this->_list[$index]->Type == self::OLE_PPS_TYPE_ROOT);
         }
         return false;
     }

@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
+// | PHP Version 5                                                        |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 1997-2002 The PHP Group                                |
 // +----------------------------------------------------------------------+
@@ -19,15 +19,6 @@
 //
 // $Id$
 
-
-if (!class_exists('OLE_PPS')) {
-    require_once 'OLE/PPS.php';
-}
-
-if (!class_exists('System')) {
-    require_once 'System.php';
-}
-
 /**
 * Class for creating File PPS's for OLE containers
 *
@@ -41,7 +32,7 @@ class OLE_PPS_File extends OLE_PPS
     * The temporary dir for storing the OLE file
     * @var string
     */
-    var $_tmp_dir;
+    public $_tmp_dir;
 
     /**
     * The constructor
@@ -50,14 +41,13 @@ class OLE_PPS_File extends OLE_PPS
     * @param string $name The name of the file (in Unicode)
     * @see OLE::Asc2Ucs()
     */
-    function __construct($name)
+    public function __construct($name)
     {
-        $system = new System();
-        $this->_tmp_dir = $system->tmpdir();
+        $this->_tmp_dir = sys_get_temp_dir();
         parent::__construct(
             null, 
             $name,
-            OLE_PPS_TYPE_FILE,
+            \OLE::OLE_PPS_TYPE_FILE,
             null,
             null,
             null,
@@ -74,27 +64,28 @@ class OLE_PPS_File extends OLE_PPS
     * @param string $dir The dir to be used as temp dir
     * @return true if given dir is valid, false otherwise
     */
-    function setTempDir($dir)
+    public function setTempDir($dir)
     {
         if (is_dir($dir)) {
             $this->_tmp_dir = $dir;
             return true;
         }
+
         return false;
     }
 
     /**
-    * Initialization method. Has to be called right after OLE_PPS_File().
-    *
-    * @access public
-    * @return mixed true on success. PEAR_Error on failure
-    */
-    function init()
+     * Initialization method. Has to be called right after OLE_PPS_File().
+     *
+     * @return mixed true on success. PEAR_Error on failure
+     * @throws \RuntimeException
+     */
+    public function init()
     {
         $this->_tmp_filename = tempnam($this->_tmp_dir, "OLE_PPS_File");
         $fh = @fopen($this->_tmp_filename, "w+b");
         if ($fh == false) {
-            return $this->raiseError("Can't create temporary file");
+            throw new \RuntimeException("Can't create temporary file");
         }
         $this->_PPS_FILE = $fh;
         if ($this->_PPS_FILE) {
@@ -110,7 +101,7 @@ class OLE_PPS_File extends OLE_PPS
     * @access public
     * @param string $data The data to append
     */
-    function append($data)
+    public function append($data)
     {
         if ($this->_PPS_FILE) {
             fwrite($this->_PPS_FILE, $data);
@@ -123,9 +114,8 @@ class OLE_PPS_File extends OLE_PPS
      * Returns a stream for reading this file using fread() etc.
      * @return  resource  a read-only stream
      */
-    function getStream()
+    public function getStream()
     {
         $this->ole->getStream($this);
     }
 }
-?>

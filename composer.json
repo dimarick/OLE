@@ -17,20 +17,14 @@
         }
     },
     "description": "More info available on: http://pear.php.net/package/OLE",
-    "include-path": [
-        "./"
-    ],
     "license": "PHP",
-    "name": "pear/ole",
+    "name": "dimarick/ole",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=OLE",
-        "source": "https://github.com/pear/OLE"
+        "source": "https://github.com/dimarick/OLE"
     },
     "type": "library",
     "require": {
-        "pear/pear_exception": "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "*"
+        "php": ">=5.6"
     }
 }

@@ -17,3 +17,14 @@ $ pear install package.xml
 
 To upgrade
 $ pear upgrade -f package.xml
+
+## Migration
+
+- This package has no dependencies from any pear classes and uses php5 native exceptions for error handling.
+Be careful, currently many unexpected issues can throw unexpected exceptions instead of silent fail
+
+- Used standard psr-0 composer autoloader
+
+- Constants OLE_* moved to class OLE
+
+- Do not try to run it on php5 < 5.4
